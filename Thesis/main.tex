@@ -1,0 +1,40 @@
+\left( \documentclass[12pt, oneside]{book}
+
+% Preamble: Packages and settings
+\usepackage{graphicx}    % For images
+\usepackage{amsmath}     % For math symbols
+\usepackage{geometry}    % For page layout
+\usepackage{fancyhdr}    % For custom headers/footers
+\usepackage{hyperref}    % For hyperlinks in the document
+
+% Page layout settings
+\geometry{a4paper, margin=1in}
+
+% Header and footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}   % Left header: Chapter name
+\fancyfoot[C]{\thepage}    % Center footer: Page number
+
+\begin{document}
+
+% Front matter
+\frontmatter
+\include{frontmatter/titlepage}
+\include{frontmatter/abstract}
+\tableofcontents
+\listoffigures
+\listoftables
+
+% Main content
+\mainmatter
+\include{chapters/chapter1}
+\include{chapters/chapter2}
+
+% Back matter
+\backmatter
+\include{backmatter/appendix}
+\include{backmatter/bibliography}
+
+\end{document}
+
