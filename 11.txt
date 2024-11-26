@@ -1,0 +1,707 @@
+//1. Design a Finite Automata (FA) that accepts all strings over S={0, 1} having three consecutive 1's as a substring. Write a program to simulate this FA.
+
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to check if the string is accepted by the FA
+bool simulateFA(const string& input) {
+    int state = 0; // Start in the initial state q0
+
+    for (char c : input) {
+        switch (state) {
+            case 0: // q0
+                if (c == '1') state = 1;
+                else if (c == '0') state = 0;
+                else return false; // Invalid input
+                break;
+            case 1: // q1
+                if (c == '1') state = 2;
+                else if (c == '0') state = 0;
+                else return false; // Invalid input
+                break;
+            case 2: // q2
+                if (c == '1') state = 3;
+                else if (c == '0') state = 0;
+                else return false; // Invalid input
+                break;
+            case 3: // q3
+                if (c == '1' || c == '0') state = 3; // Stay in accepting state
+                else return false; // Invalid input
+                break;
+            default:
+                return false; // Should never reach here
+        }
+    }
+
+    // Check if the FA ends in the accepting state
+    return state == 3;
+}
+
+int main() {
+    string input;
+    cout << "Enter a binary string: ";
+    cin >> input;
+
+    if (simulateFA(input)) {
+        cout << "The string is accepted (contains '111')." << endl;
+    } else {
+        cout << "The string is not accepted (does not contain '111')." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+//2. Design a Finite Automata (FA) that accepts all strings over S={0, 1} having either exactly two 1's or exactly three 1's, not more nor less. Write a program to simulate this FA.
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to simulate the FA
+bool simulateFA(const string& input) {
+    string state = "q0"; // Start state
+
+    for (char c : input) {
+        if (state == "q0") {
+            if (c == '0') {
+                state = "q0"; // Stay in q0
+            } else if (c == '1') {
+                state = "q1"; // Move to q1
+            } else {
+                return false; // Invalid input
+            }
+        } else if (state == "q1") {
+            if (c == '0') {
+                state = "q1"; // Stay in q1
+            } else if (c == '1') {
+                state = "q2"; // Move to q2
+            } else {
+                return false; // Invalid input
+            }
+        } else if (state == "q2") {
+            if (c == '0') {
+                state = "q_accept-2"; // Move to accepting state for 2 `1`s
+            } else if (c == '1') {
+                state = "q3"; // Move to q3
+            } else {
+                return false; // Invalid input
+            }
+        } else if (state == "q3") {
+            if (c == '0') {
+                state = "q_accept-3"; // Move to accepting state for 3 `1`s
+            } else if (c == '1') {
+                state = "q_trap"; // Move to trap state
+            } else {
+                return false; // Invalid input
+            }
+        } else if (state == "q_trap") {
+            return false; // Already in trap state
+        } else if (state == "q_accept-2" || state == "q_accept-3") {
+            continue; // Stay in accepting states
+        } else {
+            return false; // Invalid state
+        }
+    }
+
+    // Accept if in q_accept-2 or q_accept-3
+    return state == "q_accept-2" || state == "q_accept-3";
+}
+
+int main() {
+    string input;
+    cout << "Enter a binary string (over {0, 1}): ";
+    cin >> input;
+
+    if (simulateFA(input)) {
+        cout << "The string is accepted (belongs to the language with exactly two or three 1's)." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to the language)." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+// 3. Design a Finite Automata (FA) that accepts language L1, over S={a, b}, comprising of all strings (of
+//length 4 or more) having first two characters same as the last two. Write a program to simulate this
+//FA
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to simulate the FA
+bool simulateFA(const string& input) {
+    if (input.length() < 4) {
+        return false; // Length constraint not satisfied
+    }
+
+    char first = input[0];
+    char second = input[1];
+    int n = input.length();
+
+    // Check the last two characters
+    if (input[n - 2] == first && input[n - 1] == second) {
+        return true; // First two match the last two
+    }
+
+    return false; // Does not satisfy the condition
+}
+
+int main() {
+    string input;
+    cout << "Enter a string (over {a, b}): ";
+    cin >> input;
+
+    if (simulateFA(input)) {
+        cout << "The string is accepted (belongs to the language)." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to the language)." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+// 4. Design a Finite Automata (FA) that accepts language L2, over S= {a, b} where L2= a(a+b)*b. Write
+//a program to simulate this FA.
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to simulate the FA
+bool simulateFA(const string& input) {
+    string state = "q0"; // Start state
+
+    for (char c : input) {
+        if (state == "q0") {
+            if (c == 'a') {
+                state = "q1"; // Transition to q1
+            } else {
+                state = "q_trap"; // Invalid start
+            }
+        } else if (state == "q1") {
+            if (c == 'a' || c == 'b') {
+                state = "q2"; // Transition to q2
+            } else {
+                state = "q_trap"; // Invalid character
+            }
+        } else if (state == "q2") {
+            if (c == 'a') {
+                state = "q2"; // Stay in q2
+            } else if (c == 'b') {
+                state = "q3"; // Transition to q3
+            } else {
+                state = "q_trap"; // Invalid character
+            }
+        } else if (state == "q3") {
+            // Accepting state; stay here
+            break;
+        } else if (state == "q_trap") {
+            return false; // Already in trap state
+        }
+    }
+
+    // Accept only if in q3 at the end
+    return state == "q3";
+}
+
+int main() {
+    string input;
+    cout << "Enter a string (over {a, b}): ";
+    cin >> input;
+
+    if (simulateFA(input)) {
+        cout << "The string is accepted (belongs to the language L2 = a(a+b)*b)." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to the language L2)." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+//5.  Design a Finite Automata (FA) that accepts language EVEN-EVEN over S={a, b}. Write a program
+//to simulate this FA
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to simulate the FA
+bool simulateFA(const string& input) {
+    string state = "q_ee"; // Start state
+
+    for (char c : input) {
+        if (state == "q_ee") {
+            if (c == 'a') {
+                state = "q_oe"; // Transition on 'a'
+            } else if (c == 'b') {
+                state = "q_eo"; // Transition on 'b'
+            } else {
+                return false; // Invalid character
+            }
+        } else if (state == "q_eo") {
+            if (c == 'a') {
+                state = "q_oo"; // Transition on 'a'
+            } else if (c == 'b') {
+                state = "q_ee"; // Transition on 'b'
+            } else {
+                return false; // Invalid character
+            }
+        } else if (state == "q_oe") {
+            if (c == 'a') {
+                state = "q_ee"; // Transition on 'a'
+            } else if (c == 'b') {
+                state = "q_oo"; // Transition on 'b'
+            } else {
+                return false; // Invalid character
+            }
+        } else if (state == "q_oo") {
+            if (c == 'a') {
+                state = "q_eo"; // Transition on 'a'
+            } else if (c == 'b') {
+                state = "q_oe"; // Transition on 'b'
+            } else {
+                return false; // Invalid character
+            }
+        }
+    }
+
+    // Accept only if in q_ee at the end
+    return state == "q_ee";
+}
+
+int main() {
+    string input;
+    cout << "Enter a string (over {a, b}): ";
+    cin >> input;
+
+    if (simulateFA(input)) {
+        cout << "The string is accepted (belongs to the EVEN-EVEN language)." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to the EVEN-EVEN language)." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+//6. union wala
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to simulate DFA for L1
+bool simulateL1(const string& input) {
+    int state = 0; // Initial state for L1
+    for (char c : input) {
+        switch (state) {
+            case 0: state = (c == '1') ? 1 : 0; break; // q0 -> q1 on '1'
+            case 1: state = (c == '1') ? 1 : 0; break; // q1 (accepting)
+            default: return false; // Invalid input
+        }
+    }
+    return state == 1; // Accepting state for L1
+}
+
+// Function to simulate DFA for L2
+bool simulateL2(const string& input) {
+    int state = 0; // Initial state for L2
+    for (char c : input) {
+        switch (state) {
+            case 0: state = (c == '0') ? 1 : 0; break; // q0 -> q1 on '0'
+            case 1: state = (c == '0') ? 1 : 0; break; // q1 (accepting)
+            default: return false; // Invalid input
+        }
+    }
+    return state == 1; // Accepting state for L2
+}
+
+// Function to simulate Union (L1 ∪ L2)
+bool simulateUnion(const string& input) {
+    return simulateL1(input) || simulateL2(input);
+}
+
+// Function to simulate Intersection (L1 ∩ L2)
+bool simulateIntersection(const string& input) {
+    return simulateL1(input) && simulateL2(input);
+}
+
+// Function to simulate Concatenation (L1 L2)
+bool simulateConcatenation(const string& input) {
+    for (size_t i = 0; i <= input.size(); ++i) {
+        string part1 = input.substr(0, i);   // First part for L1
+        string part2 = input.substr(i);     // Second part for L2
+        if (simulateL1(part1) && simulateL2(part2)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    string input;
+    cout << "Enter a binary string: ";
+    cin >> input;
+
+    cout << "Union (L1 ∪ L2): " 
+         << (simulateUnion(input) ? "Accepted" : "Rejected") << endl;
+
+    cout << "Intersection (L1 ∩ L2): " 
+         << (simulateIntersection(input) ? "Accepted" : "Rejected") << endl;
+
+    cout << "Concatenation (L1 L2): " 
+         << (simulateConcatenation(input) ? "Accepted" : "Rejected") << endl;
+
+    return 0;
+}
+
+
+
+
+
+
+7. // pda anbn
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+// Function to simulate the PDA
+bool simulatePDA(const string& input) {
+    stack<char> pdaStack; // Stack to simulate the PDA
+    pdaStack.push('Z');   // Push initial stack symbol Z
+
+    int state = 0; // Start state q0
+
+    for (char c : input) {
+        switch (state) {
+            case 0: // State q0
+                if (c == 'a') {
+                    pdaStack.push('X'); // Push X for 'a'
+                    state = 1;         // Move to q1
+                } else {
+                    return false; // Invalid input at q0
+                }
+                break;
+
+            case 1: // State q1
+                if (c == 'a') {
+                    pdaStack.push('X'); // Push X for 'a'
+                } else if (c == 'b') {
+                    if (!pdaStack.empty() && pdaStack.top() == 'X') {
+                        pdaStack.pop(); // Pop X for 'b'
+                        state = 2;     // Move to q2
+                    } else {
+                        return false; // Stack mismatch
+                    }
+                } else {
+                    return false; // Invalid input
+                }
+                break;
+
+            case 2: // State q2
+                if (c == 'b') {
+                    if (!pdaStack.empty() && pdaStack.top() == 'X') {
+                        pdaStack.pop(); // Pop X for 'b'
+                    } else {
+                        return false; // Stack mismatch
+                    }
+                } else {
+                    return false; // Invalid input
+                }
+                break;
+
+            default:
+                return false; // Should not reach here
+        }
+    }
+
+    // Check if the PDA ends in an accepting state with an empty stack
+    return (state == 2 && pdaStack.top() == 'Z');
+}
+
+int main() {
+    string input;
+    cout << "Enter a string (over {a, b}): ";
+    cin >> input;
+
+    if (simulatePDA(input)) {
+        cout << "The string is accepted (belongs to {a^n b^n, n > 0})." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to {a^n b^n, n > 0})." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+//8.pda wXw
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+// Function to simulate the PDA
+bool simulatePDA(const string& input) {
+    stack<char> pdaStack;
+    int i = 0;
+    int n = input.length();
+
+    // State: q0 - Initial state, pushing w onto the stack
+    while (i < n && (input[i] == 'a' || input[i] == 'b')) {
+        pdaStack.push(input[i]);
+        i++;
+    }
+
+    // The symbol 'X' separates w and w^r, so we expect it next
+    if (i < n && input[i] == 'X') {
+        i++; // Skip the 'X'
+    } else {
+        return false; // If 'X' is missing, reject
+    }
+
+    // State: q2 - Checking the reverse of w
+    while (i < n) {
+        if (input[i] == 'a' && !pdaStack.empty() && pdaStack.top() == 'a') {
+            pdaStack.pop();
+        } else if (input[i] == 'b' && !pdaStack.empty() && pdaStack.top() == 'b') {
+            pdaStack.pop();
+        } else {
+            return false; // Mismatch or stack underflow
+        }
+        i++;
+    }
+
+    // If stack is empty after processing w^r, accept the string
+    return pdaStack.empty();
+}
+
+int main() {
+    string input;
+    cout << "Enter a string over {a, b} with X separating w and w^r: ";
+    cin >> input;
+
+    if (simulatePDA(input)) {
+        cout << "The string is accepted (belongs to the language)." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to the language)." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+//9. TM anbncn
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Function to simulate the Turing Machine
+bool simulateTM(string tape) {
+    int head = 0; // Head position on the tape
+    char currentState = 'q0'; // Start state
+
+    while (currentState != 'q_accept' && currentState != 'q_reject') {
+        switch (currentState) {
+            case 'q0': // Start state
+                if (tape[head] == 'a') {
+                    tape[head] = 'X'; // Mark 'a' as X
+                    currentState = 'q1';
+                    head++;
+                } else {
+                    currentState = 'q_reject'; // No 'a' found at the start
+                }
+                break;
+
+            case 'q1': // Find the first 'b'
+                if (tape[head] == 'b') {
+                    tape[head] = 'Y'; // Mark 'b' as Y
+                    currentState = 'q2';
+                    head++;
+                } else if (tape[head] == 'X') {
+                    head++; // Skip marked X
+                } else {
+                    currentState = 'q_reject'; // Invalid sequence
+                }
+                break;
+
+            case 'q2': // Find the first 'c'
+                if (tape[head] == 'c') {
+                    tape[head] = 'Z'; // Mark 'c' as Z
+                    currentState = 'q3';
+                    head = 0; // Reset head to the start
+                } else if (tape[head] == 'Y') {
+                    head++; // Skip marked Y
+                } else {
+                    currentState = 'q_reject'; // Invalid sequence
+                }
+                break;
+
+            case 'q3': // Check for more a, b, c
+                if (tape.find('a') != string::npos) {
+                    currentState = 'q0'; // Loop to process remaining symbols
+                } else {
+                    currentState = 'q4'; // No more a, b, c to process
+                }
+                break;
+
+            case 'q4': // Verify all symbols are marked
+                if (tape.find_first_not_of("XYZ_") == string::npos) {
+                    currentState = 'q_accept'; // All symbols matched
+                } else {
+                    currentState = 'q_reject'; // Unmatched symbols found
+                }
+                break;
+
+            default:
+                currentState = 'q_reject'; // Should not reach here
+        }
+    }
+
+    return currentState == 'q_accept';
+}
+
+int main() {
+    string input;
+    cout << "Enter a string (over {a, b, c}): ";
+    cin >> input;
+
+    if (simulateTM(input)) {
+        cout << "The string is accepted (belongs to {a^n b^n c^n, n > 0})." << endl;
+    } else {
+        cout << "The string is rejected (does not belong to {a^n b^n c^n, n > 0})." << endl;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+//10. increment
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class TuringMachine {
+public:
+    TuringMachine(string input) {
+        tape = input;
+        tape += '#';  // Add a blank symbol to mark the end of the input
+        head = 0;
+        state = "q0";
+    }
+
+    void simulate() {
+        while (state != "q_h") {
+            char currentSymbol = tape[head];
+
+            if (state == "q0") {
+                if (currentSymbol == '0' || currentSymbol == '1') {
+                    state = "q1";
+                    head++;
+                } else if (currentSymbol == '#') {
+                    state = "q2";
+                    head--;
+                }
+            }
+            else if (state == "q1") {
+                if (currentSymbol == '0' || currentSymbol == '1') {
+                    head++;
+                } else if (currentSymbol == '#') {
+                    state = "q2";
+                    head--;
+                }
+            }
+            else if (state == "q2") {
+                if (currentSymbol == '0') {
+                    tape[head] = '1';
+                    state = "q_h"; // Halting state (increment is done)
+                } else if (currentSymbol == '1') {
+                    tape[head] = '0';
+                    state = "q3";
+                    head--;
+                }
+            }
+            else if (state == "q3") {
+                if (currentSymbol == '0') {
+                    tape[head] = '1';
+                    state = "q_h"; // Halting state (increment is done)
+                } else if (currentSymbol == '1') {
+                    tape[head] = '0';
+                    head--;
+                } else if (currentSymbol == '#') {
+                    tape[head] = '1';
+                    state = "q_h"; // Halting state (overflow)
+                }
+            }
+        }
+    }
+
+    void printTape() {
+        cout << "Final tape: ";
+        for (char c : tape) {
+            cout << c;
+        }
+        cout << endl;
+    }
+
+private:
+    string tape;
+    int head;
+    string state;
+};
+
+int main() {
+    string binaryNumber;
+    cout << "Enter a binary number (no spaces, e.g., 1101): ";
+    cin >> binaryNumber;
+
+    TuringMachine tm(binaryNumber);
+    tm.simulate();
+    tm.printTape();
+
+    return 0;
+}
