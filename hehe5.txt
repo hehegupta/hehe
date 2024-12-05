@@ -1,0 +1,61 @@
+import time
+
+class ExamSystem:
+    def _init_(self):
+        self.timer = 0
+        self.submission_status = "Not Submitted"
+    
+    def load_exam(self):
+        print("Exam page loaded. Questions displayed.")
+    
+    def start_timer(self, duration):
+        print(f"Timer started for {duration} seconds.")
+        self.timer = duration
+    
+    def submit_answers(self, answers):
+        if self.timer > 0:
+            print("Submitting answers...")
+            self.submission_status = "Submitted"
+            return self.validate_submission(answers)
+        else:
+            return self.handle_timeout()
+    
+    def validate_submission(self, answers):
+        print("Validating submission...")
+        if isinstance(answers, dict) and len(answers) > 0:
+            print("Submission successful! Answers saved to the database.")
+            return "Success"
+        else:
+            return self.handle_errors("Invalid submission format or empty answers.")
+    
+    def handle_timeout(self):
+        print("Time expired. Submission failed!")
+        return "Timeout"
+    
+    def handle_errors(self, error_message):
+        print(f"Error: {error_message}")
+        return "Error"
+    
+    def countdown_timer(self):
+        while self.timer > 0:
+            time.sleep(1)
+            self.timer -= 1
+        if self.submission_status == "Not Submitted":
+            self.handle_timeout()
+
+# Simulating the Exam Submission Process
+exam_system = ExamSystem()
+exam_system.load_exam()
+exam_system.start_timer(10)
+
+# Simulating student responses
+student_answers = {
+    "Q1": "A",
+    "Q2": "B",
+    "Q3": "C"
+}
+
+# Start the timer and attempt submission
+exam_system.countdown_timer()  # Simulates countdown
+result = exam_system.submit_answers(student_answers)
+print(f"Final Result: {result}")
