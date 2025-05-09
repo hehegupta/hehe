@@ -1,0 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create synthetic linear data: y = 2x + 3 + noise
+np.random.seed(0)
+X = 2 * np.random.rand(100, 1)
+noise = np.random.normal(0, 0.5, size=(100, 1))  # Gaussian noise
+y = 3 + 2 * X + noise
+
+# Visualize the data
+plt.scatter(X, y)
+plt.title("Synthetic Linear Data with Gaussian Noise")
+plt.xlabel("X")
+plt.ylabel("y")
+plt.show()
+
+
+
+
+# Add a bias column (X0 = 1)
+X_b = np.c_[np.ones((100, 1)), X]  # Add x0 = 1 to each instance
+theta = np.random.randn(2, 1)     # Random initialization of weights
+
+# Gradient Descent Settings
+learning_rate = 0.1
+n_iterations = 1000
+m = 100
+
+for iteration in range(n_iterations):
+    gradients = 2/m * X_b.T @ (X_b @ theta - y)
+    theta -= learning_rate * gradients
+
+print("Final weights (theta):", theta)

@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.metrics import (accuracy_score, confusion_matrix, recall_score,
+                             f1_score, roc_auc_score, precision_score)
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import LabelEncoder, label_binarize
+
+# Load Iris dataset
+df = pd.read_csv(r"C:\Users\ISHAAN\Desktop\New folder (2)\iris.data", header=None)
+df.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
+
+# Encode target
+le = LabelEncoder()
+df['species_encoded'] = le.fit_transform(df['species'])
+
+X = df[['sepal_length', 'sepal_width', 'petal_length', 'petal_width']]
+y = df['species_encoded']
+
+# Binary classification for metrics (Iris-setosa vs not)
+df['binary_label'] = (df['species'] == 'Iris-setosa').astype(int)
+y_binary = df['binary_label']
+
+# Split for binary metrics
+X_train, X_test, y_train_bin, y_test_bin = train_test_split(X, y_binary, test_size=0.2, random_state=42)
+
+
+
+
+
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train_bin)
+y_pred = model.predict(X_test)
+
+tn, fp, fn, tp = confusion_matrix(y_test_bin, y_pred).ravel()
+
+print("\n--- Decision Tree ---")
+print(f"Accuracy: {accuracy_score(y_test_bin, y_pred):.4f}")
+print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
+print(f"Error Rate: {1 - accuracy_score(y_test_bin, y_pred):.4f}")
+print(f"Recall: {recall_score(y_test_bin, y_pred):.4f}")
+print(f"Specificity: {tn / (tn + fp):.4f}")
+print(f"F1 Score: {f1_score(y_test_bin, y_pred):.4f}")
+print(f"Precision: {precision_score(y_test_bin, y_pred):.4f}")
+print(f"AUC: {roc_auc_score(y_test_bin, y_pred):.4f}")

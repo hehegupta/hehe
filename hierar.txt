@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+from sklearn. cluster import KMeans
+from sklearn.metrics import adjusted_rand_score, silhouette_score
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(r"C:\Users\ISHAAN\Desktop\New folder (2)\iris.data", header=None)
+df.columns = ['sepal_length', 'sepal_width' , 'petal_length', 'petal_width' , 'species' ]
+
+# Encode true labels for evaluation
+le = LabelEncoder ()
+df ['species_encoded'] = le.fit_transform(df ['species' ])
+
+X = df [ ['sepal_length' , 'sepal_width' , 'petal_length', 'petal_width' ]]
+
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+import seaborn as sns
+
+# Apply Agglomerative Clustering
+agg_clust = AgglomerativeClustering (n_clusters=3)
+df ['agg_cluster' ] = agg_clust.fit_predict (X)
+
+# Evaluation
+ari_agg = adjusted_rand_score (df ['species_encoded' ], df ['agg_cluster' ])
+silhouette_agg = silhouette_score (X, df ['agg_cluster' ])
+
+print (" === Hierarchical Clustering Metrics === ")
+print (f"Adjusted Rand Index: {ari_agg: .4f}")
+print (f"Silhouette Score: {silhouette_agg: . 4f}")
+# Dendrogram (optional visualization)
+plt.figure (figsize=(10, 5))
+linked = linkage (X, method='ward')
+dendrogram (linked, labels=df ['species' ] .values, leaf_rotation=90)
+plt.title ('Hierarchical Clustering Dendrogram')
+plt.xlabel ('Samples')
+plt.ylabel ('Distance')
+plt.grid(True)
+plt. show ()

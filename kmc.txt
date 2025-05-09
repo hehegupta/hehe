@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+from sklearn. cluster import KMeans
+from sklearn.metrics import adjusted_rand_score, silhouette_score
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv(r"C:\Users\ISHAAN\Desktop\New folder (2) \iris.data", header=None)
+df.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species' ]
+
+# Encode true labels for evaluation
+le = LabelEncoder ()
+df ['species_encoded' ] = le.fit_transform (df ['species' ])
+
+X = df [ ['sepal_length' , 'sepal_width' , 'petal_length', 'petal_width' ]]
+
+# Apply KMeans
+kmeans = KMeans (n_clusters=3, random_state=42, n_init=10)
+kmeans.fit (X)
+df ['kmeans_cluster' ] = kmeans. labels
+
+# Evaluation (using true labels for reference)
+ari = adjusted_rand_score (df ['species_encoded' ], df ['kmeans_cluster' ])
+silhouette = silhouette_score (X, kmeans. labels_)
+
+# Print results
+print (" === K-Means Clustering Metrics === ")
+print (f"Adjusted Rand Index: {ari :. 4f}")
+print (f"Silhouette Score: {silhouette: .4f}")
+print ("Cluster Centers: \n", kmeans. cluster_centers_)
+
+# Optional: visualize clusters
+plt.figure(figsize=(6, 4))
+plt.scatter (X['petal_length'], X['petal_width'], c=kmeans. labels_, cmap='viridis')
+plt.xlabel ('Petal Length')
+plt.ylabel ('Petal Width')
+plt.title ('K-Means Clustering (3 Clusters) ')
+plt.grid (True)
+plt. show()
