@@ -1,0 +1,98 @@
+Lab 1: Digital Evidence Integrity with Hasher
+Generate a cryptographic hash (SHA-256) of a file and demonstrate that any modification produces a
+completely different hash, proving data tampering.
+c drive me folder--folder me hasher.exe-- cmd me cd C:\(foldername) -   Hasher.exe -f (textfile).txt --sha256
+Calculate Tampered Hash
+• Repeat Step 3 on the modified file.
+• Record the new hash as Tampered Hash.
+Analysis & Conclusion
+• Compare the two hashes.
+• Study: Why a single-bit change produces a completely different hash (avalanche effect).
+Even a one-word change results in a completely different 64-character hash
+due to the avalanche effect in SHA-256.
+Conclusion:
+Cryptographic hashing ensures integrity verification. Any alteration — even 1 bit — invalidates the hash,
+providing tamper-evidence critical in legal proceedings.
+
+
+
+Lab2 Network Reconnaissance & IP Tracking
+ Use built-in CLI tools to gather network configuration, active connections, and trace packet paths.
+ Record IP, MAC, Gateway, DNS : ipconfig /all
+Find an ESTABLISHED connection
+→ note PID :                   netstat -ano   tasklist /fi "PID eq (PID)"
+Count hops, identify first hop
+(gateway)
+:                             tracert www.google.com
+
+
+
+
+Lab 3 Windows Registry Forensics with Registry
+Explorer   
+Objective:
+Load the live NTUSER.DAT hive and extract proof-of-execution evidence from the UserAssist key
+using Registry Explorer (superior to regedit ).
+• Run RegistryExplorer.exe as Administrator
+• File → Load Live Hive
+• Select NTUSER.DAT (current user)
+• Go to:
+Software → Microsoft → Windows → CurrentVersion → Explorer →
+UserAssist             
+• Record the last 3 executed programs:
+• Full path
+• Run count
+• Last run timestamp (converted)
+Forensic Analysis
+• Why Registry Explorer > regedit?
+✓ Auto-decodes ROT13 ✓ Shows timestamps & run counts ✓ Bookmark navigation
+• UserAssist Significance:
+✓ Tracks GUI program launches ✓ Persists after deletion of shortcuts/history
+Deliverable: UserAssist Execution Evidence
+# Program Name (Decoded) Full Path Run Count Last Execution (UTC)
+
+
+
+
+
+lab 4 Lab 4: Packet Capture & Protocol Analysis with
+Wireshark
+Objective:
+Capture live network traffic, filter for specific protocols (HTTP/DNS), extract artifacts (e.g., visited
+websites, DNS queries), and reconstruct user activity from packet data.
+
+
+wireshark admin me blue fin websites open ; 30 sec bad red button; filter  http -look for get : rclick get packet-follow-http stream     host name, 2nd block number   and timestamp on main window   :; filter: dns: standard query a for test.local: normal click record queries-name
+dns.qry.name contains "test.local"
+http.request.method == "GET"
+http.host contains "neverssl.com" 
+
+
+Q1. Analyze a capture file to determine the most prevalent protocols and their proportional impact on the network.
+Stop the capture and navigate to Statistics > Protocol Hierarchy.
+3.Task:
+o Identify the top three protocols by Packets percentage and report their values.
+o Identify the top three protocols by Bytes percentage and report their values
+
+
+
+
+Q2. Identify all unique devices (endpoints) on the network and analyze the conversations between them.
+•  Procedure:
+1.	Start a Wireshark capture and allow it to run for at least 5 minutes.
+2.	Stop the capture and go to Statistics > Endpoints.
+3.	Select the IPv4 tab.
+4.	Go to Statistics > Conversations.
+5.	Select the TCP tab.          sort by highest packets sent
+
+
+Q3.Objective: Use the I/O Graph to visualize network traffic and identify a significant traffic spike.
+•  Procedure:
+4.	Navigate to Statistics > I/O Graph. spike ka time note (for eg 4s) then  Display Filter: frame.time_relative >= 3.5 && frame.time_relative <= 5.0
+then Statistics > Protocol Hierarchy.  look at highest bytes
+
+
+
+
+
+
