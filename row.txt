@@ -1,0 +1,43 @@
+
+
+10.# row transposition cipher transposition operation.
+import math
+
+def encrypt(message, key):
+    message = message.replace(" ", "").upper()
+
+    cols = len(key)
+    rows = math.ceil(len(message) / cols)
+
+    # Padding
+    while len(message) < rows * cols:
+        message += 'X'
+
+    matrix = []
+
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            row.append(message[i * cols + j])
+        matrix.append(row)
+
+    cipher = ""
+
+    key_order = sorted(list(enumerate(key)),
+                       key=lambda x: x[1])
+
+    for col_index, _ in key_order:
+        for row in matrix:
+            cipher += row[col_index]
+
+    return cipher
+
+
+message = input("Enter message: ")
+key = input("Enter numeric key: ")
+
+encrypted = encrypt(message, key)
+
+print("Encrypted Text:", encrypted)
+
+
