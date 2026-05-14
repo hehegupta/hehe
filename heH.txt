@@ -1,0 +1,388 @@
+5. #caesar cipher substitution operation
+def caesar_encrypt(text, shift):
+    result = ""
+    for char in text:
+        if char.isalpha():
+            ascii_offset = 65 if char.isupper() else 97
+            encrypted_char = chr((ord(char) - ascii_offset + shift) % 26 + ascii_offset)
+            result += encrypted_char
+        else:
+            result += char
+    return result
+def caesar_decrypt(text, shift):
+    return caesar_encrypt(text, -shift)
+# Input
+message = input("Enter message: ")
+shift = int(input("Enter shift value: "))
+# Encryption
+encrypted = caesar_encrypt(message, shift)
+print("Encrypted Text:", encrypted)
+# Decryption
+decrypted = caesar_decrypt(encrypted, shift)
+print("Decrypted Text:", decrypted)
+
+
+6. # monoalphabetic and polyalphabetic cipher substitution operation.
+import string
+alphabet = string.ascii_uppercase
+key = "QWERTYUIOPASDFGHJKLZXCVBNM"
+encrypt_dict = dict(zip(alphabet, key))
+decrypt_dict = dict(zip(key, alphabet))
+def encrypt(text):
+    result = ""
+    for char in text.upper():
+        if char in encrypt_dict:
+            result += encrypt_dict[char]
+        else:
+            result += char
+    return result
+def decrypt(text):
+    result = ""
+    for char in text.upper():
+        if char in decrypt_dict:
+            result += decrypt_dict[char]
+        else:
+            result += char
+    return result
+message = input("Enter message: ")
+encrypted = encrypt(message)
+print("Encrypted:", encrypted)
+decrypted = decrypt(encrypted)
+print("Decrypted:", decrypted)
+
+#Polyalphabetic Cipher
+def generate_key(message, key):
+    key = list(key)
+
+    if len(message) == len(key):
+        return "".join(key)
+
+    for i in range(len(message) - len(key)):
+        key.append(key[i % len(key)])
+
+    return "".join(key)
+def encrypt(message, key):
+    encrypted_text = []
+    for i in range(len(message)):
+        char = (
+            (ord(message[i]) + ord(key[i])) % 26
+        ) + ord('A')
+        encrypted_text.append(chr(char))
+    return "".join(encrypted_text)
+def decrypt(cipher_text, key):
+    decrypted_text = []
+    for i in range(len(cipher_text)):
+        char = (
+            (ord(cipher_text[i]) - ord(key[i]) + 26) % 26
+        ) + ord('A')
+        decrypted_text.append(chr(char))
+    return "".join(decrypted_text
+message = input("Enter message: ").upper().replace(" ", "")
+keyword = input("Enter keyword: ").upper()
+key = generate_key(message, keyword)
+encrypted = encrypt(message, key)
+print("Encrypted:", encrypted)
+decrypted = decrypt(encrypted, key)
+print("Decrypted:", decrypted)
+
+
+7. #Implement playfair cipher substitution operation. 
+def generate_matrix(key):
+    key = key.upper().replace("J", "I")
+    matrix = []
+    used = set()
+    for char in key:
+        if char.isalpha() and char not in used:
+            used.add(char)
+            matrix.append(char)
+    for char in "ABCDEFGHIKLMNOPQRSTUVWXYZ":
+        if char not in used:
+            used.add(char)
+            matrix.append(char)
+    return [matrix[i:i + 5] for i in range(0, 25, 5)]
+def find_position(matrix, char):
+    for row in range(5):
+        for col in range(5):
+            if matrix[row][col] == char:
+                return row, col
+def prepare_text(text):
+    text = text.upper().replace("J", "I")
+    text = "".join(filter(str.isalpha, text))
+    prepared = ""
+    i = 0
+    while i < len(text):
+        a = text[i]
+        if i + 1 < len(text):
+            b = text[i + 1]
+        else:
+            b = "X"
+        if a == b:
+            prepared += a + "X"
+            i += 1
+        else:
+            prepared += a + b
+            i += 2
+    if len(prepared) % 2 != 0:
+        prepared += "X"
+    return prepared
+def encrypt_pair(matrix, a, b):
+    row1, col1 = find_position(matrix, a)
+    row2, col2 = find_position(matrix, b)
+    if row1 == row2:
+        return (
+            matrix[row1][(col1 + 1) % 5] +
+            matrix[row2][(col2 + 1) % 5]
+        )
+    elif col1 == col2:
+        return (
+            matrix[(row1 + 1) % 5][col1] +
+            matrix[(row2 + 1) % 5][col2]
+        )
+    else:
+        return (
+            matrix[row1][col2] +
+            matrix[row2][col1]
+        )
+def decrypt_pair(matrix, a, b):
+    row1, col1 = find_position(matrix, a)
+    row2, col2 = find_position(matrix, b)
+    if row1 == row2:
+        return (
+            matrix[row1][(col1 - 1) % 5] +
+            matrix[row2][(col2 - 1) % 5]
+        )
+    elif col1 == col2:
+        return (
+            matrix[(row1 - 1) % 5][col1] +
+            matrix[(row2 - 1) % 5][col2]
+        )
+    else:
+        return (
+            matrix[row1][col2] +
+            matrix[row2][col1]
+        )
+def encrypt(text, key):
+    matrix = generate_matrix(key)
+    text = prepare_text(text)
+    cipher = ""
+    for i in range(0, len(text), 2):
+        cipher += encrypt_pair(matrix, text[i], text[i + 1])
+    return cipher
+def decrypt(cipher, key):
+    matrix = generate_matrix(key)
+    plain = ""
+    for i in range(0, len(cipher), 2):
+        plain += decrypt_pair(matrix, cipher[i], cipher[i + 1])
+    return plain
+message = input("Enter message: ")
+key = input("Enter key: ")
+encrypted = encrypt(message, key)
+print("Encrypted Text:", encrypted)
+decrypted = decrypt(encrypted, key)
+print("Decrypted Text:", decrypted)
+
+8. #hill cipher substitution operation.
+import numpy as np
+# Key matrix
+key_matrix = np.array([[3, 3],
+                       [2, 5]])
+def text_to_numbers(text):
+    return [ord(char) - ord('A') for char in text]
+def numbers_to_text(numbers):
+    return ''.join(chr(num + ord('A')) for num in numbers)
+def hill_encrypt(message):
+    message = message.upper().replace(" ", "")
+    # Padding if odd length
+    if len(message) % 2 != 0:
+        message += 'X'
+    cipher_text = ""
+    for i in range(0, len(message), 2):
+        pair = message[i:i+2]
+        vector = np.array(text_to_numbers(pair)).reshape(2, 1)
+        result = np.dot(key_matrix, vector) % 26
+        cipher_text += numbers_to_text(result.flatten())
+    return cipher_text
+message = input("Enter message: ")
+encrypted = hill_encrypt(message)
+print("Encrypted Text:", encrypted)
+
+
+9. #rail fence cipher transposition operation
+def rail_fence_encrypt(text, rails):
+    fence = [['\n' for _ in range(len(text))]
+             for _ in range(rails)]
+
+    row = 0
+    direction = 1
+
+    for col in range(len(text)):
+        fence[row][col] = text[col]
+
+        if row == 0:
+            direction = 1
+        elif row == rails - 1:
+            direction = -1
+
+        row += direction
+
+    result = ""
+
+    for i in range(rails):
+        for j in range(len(text)):
+            if fence[i][j] != '\n':
+                result += fence[i][j]
+
+    return result
+
+
+def rail_fence_decrypt(cipher, rails):
+    fence = [['\n' for _ in range(len(cipher))]
+             for _ in range(rails)]
+
+    row = 0
+    direction = 1
+
+    # Mark zigzag positions
+    for col in range(len(cipher)):
+        fence[row][col] = '*'
+
+        if row == 0:
+            direction = 1
+        elif row == rails - 1:
+            direction = -1
+
+        row += direction
+
+    # Fill marked positions
+    index = 0
+    for i in range(rails):
+        for j in range(len(cipher)):
+            if fence[i][j] == '*' and index < len(cipher):
+                fence[i][j] = cipher[index]
+                index += 1
+
+    # Read zigzag
+    result = ""
+    row = 0
+    direction = 1
+
+    for col in range(len(cipher)):
+        result += fence[row][col]
+
+        if row == 0:
+            direction = 1
+        elif row == rails - 1:
+            direction = -1
+
+        row += direction
+
+    return result
+
+
+message = input("Enter message: ").replace(" ", "")
+rails = int(input("Enter number of rails: "))
+
+encrypted = rail_fence_encrypt(message, rails)
+print("Encrypted Text:", encrypted)
+
+decrypted = rail_fence_decrypt(encrypted, rails)
+print("Decrypted Text:", decrypted)
+
+
+10.# row transposition cipher transposition operation.
+import math
+
+def encrypt(message, key):
+    message = message.replace(" ", "").upper()
+
+    cols = len(key)
+    rows = math.ceil(len(message) / cols)
+
+    # Padding
+    while len(message) < rows * cols:
+        message += 'X'
+
+    matrix = []
+
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            row.append(message[i * cols + j])
+        matrix.append(row)
+
+    cipher = ""
+
+    key_order = sorted(list(enumerate(key)),
+                       key=lambda x: x[1])
+
+    for col_index, _ in key_order:
+        for row in matrix:
+            cipher += row[col_index]
+
+    return cipher
+
+
+message = input("Enter message: ")
+key = input("Enter numeric key: ")
+
+encrypted = encrypt(message, key)
+
+print("Encrypted Text:", encrypted)
+
+11.#product cipher transposition operation
+def caesar_encrypt(text, shift):
+    result = ""
+
+    for char in text:
+        if char.isalpha():
+            offset = 65 if char.isupper() else 97
+
+            result += chr(
+                (ord(char) - offset + shift) % 26 + offset
+            )
+        else:
+            result += char
+
+    return result
+
+
+def rail_fence_encrypt(text, rails):
+    fence = [['\n' for _ in range(len(text))]
+             for _ in range(rails)]
+
+    row = 0
+    direction = 1
+
+    for col in range(len(text)):
+        fence[row][col] = text[col]
+
+        if row == 0:
+            direction = 1
+        elif row == rails - 1:
+            direction = -1
+
+        row += direction
+
+    cipher = ""
+
+    for i in range(rails):
+        for j in range(len(text)):
+            if fence[i][j] != '\n':
+                cipher += fence[i][j]
+
+    return cipher
+
+
+message = input("Enter message: ").upper()
+
+# Step 1: Caesar Cipher
+shift = 3
+substituted = caesar_encrypt(message, shift)
+
+print("After Caesar Cipher:", substituted)
+
+# Step 2: Rail Fence Cipher
+rails = 3
+final_cipher = rail_fence_encrypt(substituted, rails)
+
+print("Final Product Cipher:", final_cipher)
