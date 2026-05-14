@@ -1,0 +1,65 @@
+
+
+6. # monoalphabetic and polyalphabetic cipher substitution operation.
+import string
+alphabet = string.ascii_uppercase
+key = "QWERTYUIOPASDFGHJKLZXCVBNM"
+encrypt_dict = dict(zip(alphabet, key))
+decrypt_dict = dict(zip(key, alphabet))
+def encrypt(text):
+    result = ""
+    for char in text.upper():
+        if char in encrypt_dict:
+            result += encrypt_dict[char]
+        else:
+            result += char
+    return result
+def decrypt(text):
+    result = ""
+    for char in text.upper():
+        if char in decrypt_dict:
+            result += decrypt_dict[char]
+        else:
+            result += char
+    return result
+message = input("Enter message: ")
+encrypted = encrypt(message)
+print("Encrypted:", encrypted)
+decrypted = decrypt(encrypted)
+print("Decrypted:", decrypted)
+
+#Polyalphabetic Cipher
+def generate_key(message, key):
+    key = list(key)
+
+    if len(message) == len(key):
+        return "".join(key)
+
+    for i in range(len(message) - len(key)):
+        key.append(key[i % len(key)])
+
+    return "".join(key)
+def encrypt(message, key):
+    encrypted_text = []
+    for i in range(len(message)):
+        char = (
+            (ord(message[i]) + ord(key[i])) % 26
+        ) + ord('A')
+        encrypted_text.append(chr(char))
+    return "".join(encrypted_text)
+def decrypt(cipher_text, key):
+    decrypted_text = []
+    for i in range(len(cipher_text)):
+        char = (
+            (ord(cipher_text[i]) - ord(key[i]) + 26) % 26
+        ) + ord('A')
+        decrypted_text.append(chr(char))
+    return "".join(decrypted_text
+message = input("Enter message: ").upper().replace(" ", "")
+keyword = input("Enter keyword: ").upper()
+key = generate_key(message, keyword)
+encrypted = encrypt(message, key)
+print("Encrypted:", encrypted)
+decrypted = decrypt(encrypted, key)
+print("Decrypted:", decrypted)
+
