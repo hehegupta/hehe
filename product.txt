@@ -1,0 +1,57 @@
+11.#product cipher transposition operation
+def caesar_encrypt(text, shift):
+    result = ""
+
+    for char in text:
+        if char.isalpha():
+            offset = 65 if char.isupper() else 97
+
+            result += chr(
+                (ord(char) - offset + shift) % 26 + offset
+            )
+        else:
+            result += char
+
+    return result
+
+
+def rail_fence_encrypt(text, rails):
+    fence = [['\n' for _ in range(len(text))]
+             for _ in range(rails)]
+
+    row = 0
+    direction = 1
+
+    for col in range(len(text)):
+        fence[row][col] = text[col]
+
+        if row == 0:
+            direction = 1
+        elif row == rails - 1:
+            direction = -1
+
+        row += direction
+
+    cipher = ""
+
+    for i in range(rails):
+        for j in range(len(text)):
+            if fence[i][j] != '\n':
+                cipher += fence[i][j]
+
+    return cipher
+
+
+message = input("Enter message: ").upper()
+
+# Step 1: Caesar Cipher
+shift = 3
+substituted = caesar_encrypt(message, shift)
+
+print("After Caesar Cipher:", substituted)
+
+# Step 2: Rail Fence Cipher
+rails = 3
+final_cipher = rail_fence_encrypt(substituted, rails)
+
+print("Final Product Cipher:", final_cipher)
