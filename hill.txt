@@ -1,0 +1,25 @@
+
+8. #hill cipher substitution operation.
+import numpy as np
+# Key matrix
+key_matrix = np.array([[3, 3],
+                       [2, 5]])
+def text_to_numbers(text):
+    return [ord(char) - ord('A') for char in text]
+def numbers_to_text(numbers):
+    return ''.join(chr(num + ord('A')) for num in numbers)
+def hill_encrypt(message):
+    message = message.upper().replace(" ", "")
+    # Padding if odd length
+    if len(message) % 2 != 0:
+        message += 'X'
+    cipher_text = ""
+    for i in range(0, len(message), 2):
+        pair = message[i:i+2]
+        vector = np.array(text_to_numbers(pair)).reshape(2, 1)
+        result = np.dot(key_matrix, vector) % 26
+        cipher_text += numbers_to_text(result.flatten())
+    return cipher_text
+message = input("Enter message: ")
+encrypted = hill_encrypt(message)
+print("Encrypted Text:", encrypted)
