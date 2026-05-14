@@ -1,0 +1,25 @@
+
+
+5. #caesar cipher substitution operation
+def caesar_encrypt(text, shift):
+    result = ""
+    for char in text:
+        if char.isalpha():
+            ascii_offset = 65 if char.isupper() else 97
+            encrypted_char = chr((ord(char) - ascii_offset + shift) % 26 + ascii_offset)
+            result += encrypted_char
+        else:
+            result += char
+    return result
+def caesar_decrypt(text, shift):
+    return caesar_encrypt(text, -shift)
+# Input
+message = input("Enter message: ")
+shift = int(input("Enter shift value: "))
+# Encryption
+encrypted = caesar_encrypt(message, shift)
+print("Encrypted Text:", encrypted)
+# Decryption
+decrypted = caesar_decrypt(encrypted, shift)
+print("Decrypted Text:", decrypted)
+
